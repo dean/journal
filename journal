@@ -1,0 +1,79 @@
+#!/bin/python
+from datetime import datetime, timedelta
+import os
+import sys
+
+
+HOME = os.environ['HOME']
+TEMPLATES_DIR = '{0}/.journal/templates/'.format(HOME)
+ORDER_FILE = '{0}/.journal/order.txt'.format(HOME)
+ENTRIES_DIR = '{0}/.journal/entries/'.format(HOME)
+MONTHS = {
+    1: 'Jan',
+    2: 'Feb',
+    3: 'Mar',
+    4: 'Apr',
+    5: 'May',
+    6: 'Jun',
+    7: 'Jul',
+    8: 'Aug',
+    9: 'Sep',
+    10: 'Oct',
+    11: 'Nov',
+    12: 'Dec'
+}
+
+
+def get_templates():
+    template_files = os.listdir(TEMPLATES_DIR)
+    templates = {}
+    for fname in template_files:
+        with open(TEMPLATES_DIR + fname, 'rb') as f:
+            templates[fname.split('.')[0].lower()] = f.read()
+    return templates
+
+
+def get_template_order():
+    if not os.path.exists(ORDER_FILE):
+        return None
+
+    with open(ORDER_FILE, 'rb') as f:
+        return filter(lambda x: x,
+                      [row.split('.')[0].lower().strip() for row in f.readlines()])
+
+
+def setup():
+    if not os.path.exists(TEMPLATES_DIR):
+        os.makedirs(TEMPLATES_DIR)
+        print('Template directories created at {0}'.format(TEMPLATES_DIR))
+
+
+def create_journal(template, date):
+    journal_path = ENTRIES_DIR + '{0}/{1}/'.format(date.year, MONTHS[date.month])
+    if not os.path.exists(journal_path):
+        os.makedirs(journal_path)
+    journal_path += str(date.day) + '.txt'
+    if os.path.exists(journal_path):
+        return journal_path
+    with open(journal_path, 'w') as f:
+        header = MONTHS[date.month] + ' ' + str(date.day) + ', ' + str(date.year)
+        f.write(header + '\n' + '-' * len(header) + '\n')
+        f.write(template)
+    return journal_path
+
+
+if __name__ == '__main__':
+    setup()
+    templates = get_templates()
+    order = get_template_order()
+    template = [templates[x] for x in filter(lambda x: templates.get(x), order)]
+    missing_keys = filter(lambda x: x not in order, templates)
+    template.extend(filter(lambda x: x, [templates.get(x) for x in missing_keys]))
+    template = '\n\n'.join(template)
+    date = datetime.today()
+    if len(sys.argv) != 1 and sys.argv[1] == 'yesterday':
+        date = date - timedelta(hours=24)
+    elif len(sys.argv) != 1 and sys.argv[1] == 'tomorrow':
+        date = date + timedelta(hours=24)
+    journal_path = create_journal(template, date)
+    os.system('vim ' + journal_path)
