@@ -1,0 +1,4 @@
+Tasks:
+    [ ] Productive Task 1
+    [ ] Productive Task 2
+    [ ] Have fun!
