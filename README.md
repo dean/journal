@@ -1,34 +1,30 @@
-# README Boilerplate
-
-A template of README best practices to make your README simple to understand and easy to use. 
-
 ## Installation
 
-Download to your project directory, add `README.md`, and commit:
+Clone the repository and move the file to /usr/bin to keep it on your path.
 
 ```sh
-curl -LO http://git.io/Xy0Chg
-git add README.md
-git commit -m "Use README Boilerplate"
+git clone https://github.com/dean/journal.git
+cd journal
+sudo cp journal /usr/bin
 ```
 
-## Usage
+## Configuration
 
-Replace the contents of `README.md` with your project's:
+By default, a folder called .journal is created in the user's home folder that
+runs the application. Inside that folder there are two folders:
+    * templates - This holds the templates you want to apply to new journals.
+    * entries - This holds all journal entries you make
 
-* Name
-* Description
-* Installation instructions
-* Usage instructions
-* Support instructions
-* Contributing instructions
+Additionally, you can create an order.txt file in ~/.journal/ to specify the
+order in which to organize your templates in a journal entry.
 
-Feel free to remove any sections that aren't applicable to your project.
+An example of these is included in the /examples directory.
+
 
 ## Support
 
-Please [open an issue](https://github.com/fraction/readme-boilerplate/issues/new) for questions and concerns.
+Please [open an issue](https://github.com/dean/journal) for questions and concerns.
 
 ## Contributing
 
-Fork the project, commit your changes, and [open a pull request](https://github.com/fraction/readme-boilerplate/compare/).
+Fork the project, commit your changes, and [open a pull request](https://github.com/dean/journal/compare/).
