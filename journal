@@ -62,6 +62,18 @@ def create_journal(template, date):
     return journal_path
 
 
+def revelations():
+    entries = []
+    for year in os.listdir(ENTRIES_DIR):
+        for month in os.listdir(os.path.join(ENTRIES_DIR, year)):
+            for item in os.listdir(os.path.join(ENTRIES_DIR, year, month)):
+                entries.append(
+                    open(os.path.join(ENTRIES_DIR, year, month, item), 'r').read()
+                )
+    revelations = '\n'.join(map(lambda x: x.split('\n\n\n')[0], entries))
+    print revelations
+
+
 if __name__ == '__main__':
     setup()
     templates = get_templates()
@@ -71,9 +83,13 @@ if __name__ == '__main__':
     template.extend(filter(lambda x: x, [templates.get(x) for x in missing_keys]))
     template = '\n\n'.join(template)
     date = datetime.today()
+    if len(sys.argv) != 1 and sys.argv[1] == 'revelations':
+        revelations()
+        exit(0)
     if len(sys.argv) != 1 and sys.argv[1] == 'yesterday':
         date = date - timedelta(hours=24)
     elif len(sys.argv) != 1 and sys.argv[1] == 'tomorrow':
         date = date + timedelta(hours=24)
     journal_path = create_journal(template, date)
     os.system('vim ' + journal_path)
+
